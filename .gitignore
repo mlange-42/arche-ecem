@@ -1,0 +1,4 @@
+*.exe
+*.pprof
+*.pgo
+/out/
