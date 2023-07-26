@@ -1,6 +1,8 @@
 package main
 
 import (
+	"flag"
+
 	"github.com/faiface/pixel/pixelgl"
 	"github.com/mlange-42/arche-model/model"
 	"github.com/mlange-42/arche-model/system"
@@ -10,6 +12,8 @@ import (
 )
 
 func main() {
+	useUI := parseArgs()
+
 	m := model.New(ecs.NewConfig().WithCapacityIncrement(1024))
 	m.TPS = 60
 
@@ -24,15 +28,26 @@ func main() {
 	m.AddSystem(&Metabolism{Rate: 0.01})
 	m.AddSystem(&Mortality{})
 
-	m.AddUISystem((&window.Window{
-		Title:        "Population",
-		Bounds:       window.B(1200, 660, 700, 340),
-		DrawInterval: 25,
-	}).With(&plot.TimeSeries{
-		Observer: &PopulationObserver{},
-	}))
+	if useUI {
+		m.AddUISystem((&window.Window{
+			Title:        "Population",
+			Bounds:       window.B(1200, 660, 700, 340),
+			DrawInterval: 25,
+		}).With(&plot.TimeSeries{
+			Observer: &PopulationObserver{},
+		}))
+	}
 
 	m.AddSystem(&system.FixedTermination{Steps: 10000})
 
 	pixelgl.Run(m.Run)
+}
+
+func parseArgs() bool {
+	var noUI bool
+
+	flag.BoolVar(&noUI, "no-ui", false, "run without UI")
+
+	flag.Parse()
+	return !noUI
 }
