@@ -23,19 +23,28 @@ func main() {
 
 	ecs.AddResource(&m.World, &grid)
 
+	m.AddSystem(&InitGrass{})
 	m.AddSystem(&InitGrazers{Count: 1000})
 
+	m.AddSystem(&Growth{Rate: 0.05})
 	m.AddSystem(&Metabolism{Rate: 0.01})
 	m.AddSystem(&Mortality{})
 
 	if useUI {
 		m.AddUISystem((&window.Window{
+			Title:        "Biomass",
+			Bounds:       window.B(1200, 300, 700, 340),
+			DrawInterval: 25,
+		}).With(
+			&plot.TimeSeries{Observer: &GrassBiomassObserver{}},
+		))
+		m.AddUISystem((&window.Window{
 			Title:        "Population",
 			Bounds:       window.B(1200, 660, 700, 340),
 			DrawInterval: 25,
-		}).With(&plot.TimeSeries{
-			Observer: &PopulationObserver{},
-		}))
+		}).With(
+			&plot.TimeSeries{Observer: &PopulationObserver{}},
+		))
 	}
 
 	m.AddSystem(&system.FixedTermination{Steps: 10000})

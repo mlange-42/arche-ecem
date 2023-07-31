@@ -16,7 +16,7 @@ type InitGrazers struct {
 func (s *InitGrazers) Initialize(w *ecs.World) {
 	grid := ecs.GetResource[GrassGrid](w)
 
-	mut := generic.NewMap2[Position, Energy](w)
+	generator := generic.NewMap2[Position, Energy](w)
 
 	width, height := grid.Width(), grid.Height()
 	len := s.Count
@@ -27,7 +27,7 @@ func (s *InitGrazers) Initialize(w *ecs.World) {
 		}
 		energy := Energy{rand.Float64()*0.5 + 0.1}
 
-		mut.NewWith(&pos, &energy)
+		generator.NewWith(&pos, &energy)
 	}
 }
 

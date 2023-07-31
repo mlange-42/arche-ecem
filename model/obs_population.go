@@ -20,7 +20,7 @@ func (o *PopulationObserver) Initialize(w *ecs.World) {
 // Update observer
 func (o *PopulationObserver) Update(w *ecs.World) {}
 
-// Header of the observer
+// Header of the observer (i.e. column names)
 func (o *PopulationObserver) Header() []string {
 	return []string{"Population"}
 }
